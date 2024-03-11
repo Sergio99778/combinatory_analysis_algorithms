@@ -13,8 +13,6 @@ class GrafoDeFlujo:
             u = stack.pop()
 
             for ind, val in enumerate(self.graph[u]):
-                print(visited)
-                print("u: ", u, " ind: ", ind, " val: ", val)
                 if visited[ind] == False and val > 0:
                     stack.append(ind)
                     visited[ind] = True
@@ -47,29 +45,59 @@ class GrafoDeFlujo:
                 self.graph[v][u] += path_flow
                 v = parent[v]
 
-        return max_flow
+        # Encuentra los arcos de corte
+        visited = [False] * self.ROW
+        self.bfs(source, visited)
+
+        # Configuración final de la matriz después de calcular el flujo máximo
+        final_configuration = self.graph
+
+        return max_flow, visited, final_configuration
+
+    # Implementación de BFS para encontrar arcos de corte
+    def bfs(self, s, visited):
+        queue = [s]
+        visited[s] = True
+
+        while queue:
+            u = queue.pop(0)
+            for ind, val in enumerate(self.graph[u]):
+                if val > 0 and not visited[ind]:
+                    queue.append(ind)
+                    visited[ind] = True
 
 
 # Ejemplo de uso del algoritmo de flujo máximo
-graph = [[0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+# 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+# 0, 0, 12, 15, 0, 0, 0, 0, 0, 0, 0, 
+# 0, 0, 0, 0, 15, 6, 0, 0, 0, 0, 0, 
+# 0, 0, 0, 0, 0, 0, 4, 6, 0, 0, 0, 
+# 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 
+# 0, 0, 0, 0, 5, 0, 0, 0, 15, 0, 0, 
+# 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 
+# 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 
+# 0, 0, 0, 0, 0, 0, 3, 0, 0, 15, 0, 
+# 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 
+# 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+graph = [[0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 12, 15, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 7, 6, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 10, 6, 0, 0, 0],
+            [0, 0, 0, 0, 15, 6, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 7, 6, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0],
-            [0, 0, 0, 0, 5, 0, 0, 0, 9, 0, 0],
+            [0, 0, 0, 0, 5, 0, 0, 0, 15, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0],
             [0, 0, 0, 0, 0, 0, 3, 0, 0, 15, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-
-for row in graph:
-    print(len(row))
-         
 
 grafo_flujo = GrafoDeFlujo(graph)
 
 fuente = 0
 sumidero = 10
 
-print("El flujo máximo es %d unidades" % grafo_flujo.flujo_maximo(fuente, sumidero))
+flujo_max, arcos_de_corte, configuracion_final = grafo_flujo.flujo_maximo(fuente, sumidero)
+
+print("El flujo máximo es %d unidades" % flujo_max)
+print("Los arcos de corte son:", arcos_de_corte)
+print("La configuración final de la matriz es:", configuracion_final)
